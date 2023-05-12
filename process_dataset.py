@@ -14,10 +14,11 @@ mtcnn = FastMTCNN(image_size=160, margin=0, min_face_size=20,
 resnet = InceptionResnetV1(pretrained='vggface2').eval()
 
 for ttv in ["Train", "Validation", "Test"]:
+    print(f"Processing {ttv} dataset")
     dataset = VideoDataset(root="../DAiSEE/DataSet/", csv=f"../DAiSEE/Labels/{ttv}Labels.csv", ttv="Train",
                            face_detector=mtcnn, embedder=resnet)
 
-    dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
     for i, batch in tqdm(enumerate(dataloader)):
         del batch["faces"]
