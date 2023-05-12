@@ -18,15 +18,15 @@ class FastMTCNN(object):
 
         Keyword arguments:
             resize (float): Fractional frame scaling. [default: {1}]
-            these parameters are already set for MTCNN:
-            select_largest=True and post_process=False
+            select_largest=True
             *args: Arguments to pass to the MTCNN constructor. See help(MTCNN).
             **kwargs: Keyword arguments to pass to the MTCNN constructor. See help(MTCNN).
         """
         self.stride = stride
         self.resize = resize
         self.batch_size = batch_size
-        self.mtcnn = MTCNN(image_size=image_size, select_largest=True, post_process=False, *args, **kwargs)
+
+        self.mtcnn = MTCNN(image_size=image_size, select_largest=True, device=device, *args, **kwargs)
 
     def __call__(self, frames):
         """Detect faces in frames using strided MTCNN."""
