@@ -3,6 +3,7 @@ import pickle
 
 from facenet_pytorch import InceptionResnetV1
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 from dataset import VideoDataset
 from face_detection import FastMTCNN
@@ -18,6 +19,6 @@ for ttv in ["Train", "Validation", "Test"]:
 
     dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
 
-    for i, batch in enumerate(dataloader):
+    for i, batch in tqdm(enumerate(dataloader)):
         del batch["faces"]
         pickle.dump(batch, open(os.path.join("vectors", ttv, f"batch_{i}.pkl"), 'wb'))
