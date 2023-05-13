@@ -34,33 +34,13 @@ class VideoDataset(Dataset):
 
     def __getitem__(self, idx):
         clip = self.paths_df.iloc[idx]
+        clip_id, extension = os.path.splitext(clip.ClipID)
         return dict(
-            clip_id=clip.ClipID,
+            clip_id=clip_id,
+            extension=extension,
+            ttv=self.ttv,
             path=clip.path,
             boredom=clip.Boredom,
             engagement=clip.Engagement,
             confusion=clip.Confusion,
             frustration=clip.Frustration)
-        
-#         try:
-#             faces = detect_faces(self.face_detector, clip.path, max_frames=300)
-#         except Exception as e:
-#             print(f"Error processing {clip.ClipID}: {e}")
-#             return dict(
-#             clip_id=clip.ClipID,
-#             faces=None,
-#             embedding=None,
-#             boredom=clip.Boredom,
-#             engagement=clip.Engagement,
-#             confusion=clip.Confusion,
-#             frustration=clip.Frustration)
-        
-#         embedding = self.embedder(faces)
-#         return dict(
-#             clip_id=clip.ClipID,
-#             faces=faces.detach(),
-#             embedding=embedding.detach(),
-#             boredom=clip.Boredom,
-#             engagement=clip.Engagement,
-#             confusion=clip.Confusion,
-#             frustration=clip.Frustration)
