@@ -19,10 +19,16 @@ for ttv in ["Train", "Validation", "Test"]:
     dataset = VideoDataset(root="../DAiSEE/DataSet/", csv=f"../DAiSEE/Labels/{ttv}Labels.csv", ttv="Train",
                            face_detector=mtcnn, embedder=resnet)
 
-    dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=20, shuffle=False)
 
     for i, batch in tqdm(enumerate(dataloader)):
+        path = os.path.join("vectors", ttv, f"batch_{i}")
+        if os.path.isfile(path+".pt"):
+            print(f"skipped batch {i}")
+            continue
         # del batch["faces"]
-        # pickle.dump(batch, open(os.path.join("vectors", ttv, f"batch_{i}.pkl"), 'wb'))
-        torch.save(batch, os.path.join("vectors", ttv, f"batch_{i}.pkl"), pickle_module=pickle, pickle_protocol=4)
-        torch.cuda.empty_cache()
+        # # faces = batch.pop("faces")
+        # # pickle.dump(batch, path, 'wb'))
+        # torch.save(batch, path+".pt", pickle_module=pickle, pickle_protocol=4)
+        # # torch.save(faces, path+"_faces.pt")
+        # torch.cuda.empty_cache()
