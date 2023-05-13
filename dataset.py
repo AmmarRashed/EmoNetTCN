@@ -19,7 +19,16 @@ def get_path(clip_id, root, ttv):
 
 
 class VideoDataset(Dataset):
-    def __init__(self, root, csv, ttv):
+    def __init__(self, root, csv, ttv, face_detector=None, embedder=None):
+        if face_detector is None:
+            face_detector = FastMTCNN()
+
+        if embedder is None:
+            embedder = InceptionResnetV1(pretrained='vggface2').eval()
+        
+        self.face_detector = face_detector
+        self.embedder = embedder
+        
         self.root = root
         self.csv = csv
         self.ttv = ttv  # train test or validation
@@ -35,10 +44,17 @@ class VideoDataset(Dataset):
     def __getitem__(self, idx):
         clip = self.paths_df.iloc[idx]
         clip_id, extension = os.path.splitext(clip.ClipID)
+        try:
+            faces = detect_faces(self.face_detector, clip.path, max_frames=300)
+            embedding = self.embedder(faces).detach()
+        except Exception as e:
+            warnings.warn(f"Error processing clip {clip['clip_id']}. Skipping.\n{type(e)}: {e}")
+            return
         return dict(
             clip_id=clip_id,
             extension=extension,
             ttv=self.ttv,
+            embedding=embedding
             path=clip.path,
             boredom=clip.Boredom,
             engagement=clip.Engagement,

@@ -20,13 +20,8 @@ output = "vectors"
 
 def process_batch(batch):
     for clip in batch:
-        try:
-            faces = detect_faces(mtcnn, clip["path"], max_frames=300)
-            embedding = resnet(faces).detach()
-        except Exception as e:
-            warnings.warn(f"Error processing clip {clip['clip_id']}. Skipping.\n{type(e)}: {e}")
+        if clip is None:
             continue
-        clip['embedding'] = embedding
         torch.save(clip, os.path.join(output, clip['ttv'], clip['clip_id']+".pt"),
                    pickle_module=pickle, pickle_protocol=4)
 
@@ -35,7 +30,7 @@ for ttv in ["Train", "Validation", "Test"]:
     print(f"Processing {ttv} dataset")
     dataset = VideoDataset(root="../DAiSEE/DataSet/", csv=f"../DAiSEE/Labels/{ttv}Labels.csv", ttv=ttv)
 
-    dataloader = DataLoader(dataset, batch_size=2, shuffle=False, collate_fn=process_batch)
+    dataloader = DataLoader(dataset, batch_size=20, shuffle=False, collate_fn=process_batch)
 
     for _ in tqdm(dataloader):
         pass
