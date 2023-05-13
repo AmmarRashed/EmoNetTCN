@@ -10,7 +10,7 @@ from tqdm import tqdm
 from dataset import VideoDataset
 from face_detection import FastMTCNN, detect_faces
 
-mtcnn = FastMTCNN(image_size=160, margin=0, min_face_size=20,
+mtcnn = FastMTCNN(stride=3, image_size=160, margin=0, min_face_size=20,
                   thresholds=[0.6, 0.7, 0.7], factor=0.709, post_process=True)
 
 resnet = InceptionResnetV1(pretrained='vggface2').eval()

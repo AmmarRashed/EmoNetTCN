@@ -38,9 +38,9 @@ class FastMTCNN(object):
 
         faces_subset = self.mtcnn(frames[::self.stride])
 
-        faces = []
-        for i, face in enumerate(faces_subset):
-            faces += [face] * self.stride
+        # faces = []
+        # for i, face in enumerate(faces_subset):
+        #     faces += [face] * self.stride
 
         return faces
 
