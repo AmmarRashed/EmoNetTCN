@@ -1,7 +1,7 @@
 import os
+import warnings
 
 import pandas as pd
-import torch
 from facenet_pytorch.models.inception_resnet_v1 import InceptionResnetV1
 from torch.utils.data import Dataset
 
@@ -25,10 +25,10 @@ class VideoDataset(Dataset):
 
         if embedder is None:
             embedder = InceptionResnetV1(pretrained='vggface2').eval()
-        
+
         self.face_detector = face_detector
         self.embedder = embedder
-        
+
         self.root = root
         self.csv = csv
         self.ttv = ttv  # train test or validation

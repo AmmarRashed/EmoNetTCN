@@ -36,11 +36,7 @@ class FastMTCNN(object):
                 for f in frames
             ]
 
-        faces_subset = self.mtcnn(frames[::self.stride])
-
-        # faces = []
-        # for i, face in enumerate(faces_subset):
-        #     faces += [face] * self.stride
+        faces = self.mtcnn(frames[::self.stride])
 
         return faces
 
@@ -48,7 +44,7 @@ class FastMTCNN(object):
 def detect_faces(fast_mtcnn, filename, max_frames=300):
     frames = []
     faces = []
-    batch_size = 60
+    batch_size = 150
     v_cap = FileVideoStream(filename).start()
     v_len = min(max_frames, int(v_cap.stream.get(cv2.CAP_PROP_FRAME_COUNT)))
     # print(f"Total of {v_len} frames.")
