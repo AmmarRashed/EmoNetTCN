@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from dataset import VideoDataset
 from face_detection import FastMTCNN
+import torch
 
 mtcnn = FastMTCNN(image_size=160, margin=0, min_face_size=20,
                   thresholds=[0.6, 0.7, 0.7], factor=0.709, post_process=True)
@@ -21,5 +22,7 @@ for ttv in ["Train", "Validation", "Test"]:
     dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
     for i, batch in tqdm(enumerate(dataloader)):
-        del batch["faces"]
-        pickle.dump(batch, open(os.path.join("vectors", ttv, f"batch_{i}.pkl"), 'wb'))
+        # del batch["faces"]
+        # pickle.dump(batch, open(os.path.join("vectors", ttv, f"batch_{i}.pkl"), 'wb'))
+        torch.save(batch, os.path.join("vectors", ttv, f"batch_{i}.pkl"), pickle_module=pickle, pickle_protocol=4)
+        torch.cuda.empty_cache()

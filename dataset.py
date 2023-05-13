@@ -47,8 +47,8 @@ class VideoDataset(Dataset):
         embedding = self.embedder(faces)
         return dict(
             clip_id=clip.ClipID,
-            faces=faces,
-            embedding=embedding,
+            # faces=faces,
+            embedding=embedding.detach(),
             boredom=clip.Boredom,
             engagement=clip.Engagement,
             confusion=clip.Confusion,
