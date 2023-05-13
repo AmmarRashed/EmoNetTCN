@@ -54,8 +54,8 @@ class VideoDataset(Dataset):
             clip_id=clip_id,
             extension=extension,
             ttv=self.ttv,
-            embedding=embedding
             path=clip.path,
+            embedding=embedding,
             boredom=clip.Boredom,
             engagement=clip.Engagement,
             confusion=clip.Confusion,
