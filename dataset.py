@@ -19,13 +19,7 @@ def get_path(clip_id, root, ttv):
 
 
 class VideoDataset(Dataset):
-    def __init__(self, root, csv, ttv, face_detector=None, embedder=None):
-        if face_detector is None:
-            face_detector = FastMTCNN()
-
-        if embedder is None:
-            embedder = InceptionResnetV1(pretrained='vggface2').eval()
-
+    def __init__(self, root, csv, ttv):
         self.root = root
         self.csv = csv
         self.ttv = ttv  # train test or validation
@@ -34,9 +28,6 @@ class VideoDataset(Dataset):
             path=self.paths_df.ClipID.apply(get_path, root=root, ttv=ttv)
         ).dropna()
         self.paths_df.columns = [c.strip() for c in self.paths_df.columns]  # some columns have extra spaces
-        self.face_detector = face_detector
-        self.embedder = embedder
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     def __len__(self):
         return len(self.paths_df)
