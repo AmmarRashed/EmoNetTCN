@@ -1,7 +1,9 @@
 import logging
 import os
+import random
 from argparse import ArgumentParser
 
+import numpy as np
 import torch
 import torch.optim as optim
 from torch import nn
@@ -10,6 +12,17 @@ from tqdm import tqdm
 
 from dataset import EmbeddingDataset
 from transformer import ImageEmbeddingRegressor
+
+# set random seed for Python's built-in random module
+random.seed(0)
+
+# set random seed for NumPy
+np.random.seed(0)
+
+# set random seed for PyTorch
+torch.manual_seed(0)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
 
 # initialize the logger
 logging.basicConfig(filename='training.log', level=logging.INFO,
