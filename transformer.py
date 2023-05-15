@@ -10,7 +10,7 @@ class ImageEmbeddingRegressor(nn.Module):
         self.encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=num_heads, dropout=dropout)
         self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=num_layers)
         # pooling
-        self.pooling = nn.AdaptiveMaxPool1d(1)
+        self.pooling = nn.AdaptiveAvgPool1d(1)
         # decoder
         self.decoder = nn.Linear(d_model, 1)
 
