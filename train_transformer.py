@@ -45,7 +45,10 @@ train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle
 val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=True)
 test_dataloader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=True)
 
-model = ImageEmbeddingRegressor()
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(f"Using {device}")
+
+model = ImageEmbeddingRegressor().to(device)
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
 
@@ -58,9 +61,11 @@ for epoch in tqdm(range(num_epochs)):
     model.train()
     train_loss = 0
     for batch in tqdm(train_dataloader, leave=False):
+        batch_x = batch["x"].to(device)
+        batch_y = batch["y"].float().to(device)
         optimizer.zero_grad()
-        output = model(batch["x"])
-        loss = criterion(output, batch["y"].float())
+        output = model(batch_x)
+        loss = criterion(output, batch_y)
         loss.backward()
         optimizer.step()
         train_loss += loss.item()
@@ -70,8 +75,8 @@ for epoch in tqdm(range(num_epochs)):
     val_loss = 0
     with torch.no_grad():
         for batch in val_dataloader:
-            output = model(batch["x"])
-            loss = criterion(output, batch["y"].float())
+            output = model(batch_x)
+            loss = criterion(output, batch_y)
             val_loss += loss.item()
     val_loss = val_loss / len(val_dataloader)
     train_loss = train_loss / len(train_dataloader)
@@ -93,9 +98,11 @@ model.load_state_dict(best_model_state_dict)
 model.eval()
 test_loss = 0
 with torch.no_grad():
-    for batch_x, batch_y in test_dataloader:
+    for batch in test_dataloader:
+        batch_x = batch["x"].to(device)
+        batch_y = batch["y"].to(device).float()
         output = model(batch_x)
-        loss = criterion(output, batch_y.float())
+        loss = criterion(output, batch_y)
         test_loss += loss.item()
 
 print(f"Test Loss: {test_loss / len(test_dataloader)}")
