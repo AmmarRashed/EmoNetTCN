@@ -1,3 +1,4 @@
+import logging
 import os
 from argparse import ArgumentParser
 
@@ -10,6 +11,9 @@ from tqdm import tqdm
 from dataset import EmbeddingDataset
 from transformer import ImageEmbeddingRegressor
 
+# initialize the logger
+logging.basicConfig(filename='training.log', level=logging.INFO,
+                    format='%(asctime)s %(levelname)s:%(message)s')
 parser = ArgumentParser()
 parser.add_argument('--num_epochs', type=int, default=50, help='Number of epochs to train the model (default: 50)')
 parser.add_argument('--batch_size', type=int, default=32, help='Input batch size for training (default: 32)')
@@ -18,7 +22,6 @@ parser.add_argument('--root_dir', type=str, default='./data', help='Root directo
 args = parser.parse_args()
 
 num_epochs = args.num_epochs
-best_val_loss = float('inf')
 
 train_dataset = EmbeddingDataset(os.path.join(args.root_dir, "Train"))
 val_dataset = EmbeddingDataset(os.path.join(args.root_dir, "Validation"))
@@ -32,6 +35,10 @@ model = ImageEmbeddingRegressor()
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
 
+best_val_loss = float('inf')
+epochs_since_last_improvement = 0
+patience = 5
+best_model_state_dict = model.state_dict()
 for epoch in tqdm(range(num_epochs)):
     # Training loop
     model.train()
@@ -52,18 +59,23 @@ for epoch in tqdm(range(num_epochs)):
             output = model(batch["x"])
             loss = criterion(output, batch["y"].float())
             val_loss += loss.item()
-
+    val_loss = val_loss / len(val_dataloader)
+    train_loss = train_loss / len(train_dataloader)
     # Print epoch statistics
-    print(
-        f"Epoch {epoch + 1} Train Loss: {train_loss / len(train_dataloader)} Val Loss: {val_loss / len(val_dataloader)}")
-
-    # Save model's best parameters every 10 epochs
-    if (epoch + 1) % 10 == 0 and val_loss < best_val_loss:
+    print(f"Epoch {epoch + 1} Train Loss: {train_loss} Val Loss: {val_loss}")
+    logging.info(f"Epoch {epoch + 1}: Train Loss={train_loss:.4f}, Val Loss={val_loss:.4f}")
+    if val_loss < best_val_loss:
         best_val_loss = val_loss
-        torch.save(model.state_dict(), 'best_model_params.pt')
+        epochs_since_last_improvement = 0
+        best_model_state_dict = model.state_dict()
+    if epochs_since_last_improvement == patience:
+        print(f"No improvements after {patience} epochs. Training stopped.")
+        break
+
+torch.save(best_model_state_dict, 'best_model_params.pt')
 
 # Load the best model parameters and test the model
-model.load_state_dict(torch.load('best_model_params.pt'))
+model.load_state_dict(best_model_state_dict)
 model.eval()
 test_loss = 0
 with torch.no_grad():
