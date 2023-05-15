@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 class ImageEmbeddingRegressor(nn.Module):
-    def __init__(self, d_model=512, num_layers=2, num_heads=1, dropout=0.1, seq_len=100):
+    def __init__(self, d_model=512, num_layers=2, num_heads=1, dropout=0.1):
         super(ImageEmbeddingRegressor, self).__init__()
 
         # Encoder layer
