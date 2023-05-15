@@ -70,7 +70,7 @@ class EmbeddingDataset(Dataset):
     def __init__(self, root, label="engagement"):
         self.root = root
         self.label = label
-        self.tensor_names = os.listdir(root)
+        self.tensor_names = [f for f in os.listdir(root) if f.endswith(".pt")]
 
     def __len__(self):
         return len(self.tensor_names)

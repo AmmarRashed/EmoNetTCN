@@ -36,7 +36,7 @@ for epoch in tqdm(range(num_epochs)):
     # Training loop
     model.train()
     train_loss = 0
-    for batch in train_dataloader:
+    for batch in tqdm(train_dataloader, leave=False):
         optimizer.zero_grad()
         output = model(batch["x"])
         loss = criterion(output, batch["y"].float())
