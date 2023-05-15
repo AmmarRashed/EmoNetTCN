@@ -5,6 +5,7 @@ import torch
 import torch.optim as optim
 from torch import nn
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 from dataset import EmbeddingDataset
 from transformer import ImageEmbeddingRegressor
@@ -31,7 +32,7 @@ model = ImageEmbeddingRegressor()
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
 
-for epoch in range(num_epochs):
+for epoch in tqdm(range(num_epochs)):
     # Training loop
     model.train()
     train_loss = 0
@@ -47,9 +48,9 @@ for epoch in range(num_epochs):
     model.eval()
     val_loss = 0
     with torch.no_grad():
-        for batch_x, batch_y in val_dataloader:
-            output = model(batch_x)
-            loss = criterion(output, batch_y.float())
+        for batch in val_dataloader:
+            output = model(batch["x"])
+            loss = criterion(output, batch["y"].float())
             val_loss += loss.item()
 
     # Print epoch statistics
