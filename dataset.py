@@ -44,11 +44,14 @@ class VideoDataset(Dataset):
     def __getitem__(self, idx):
         clip = self.paths_df.iloc[idx]
         clip_id, extension = os.path.splitext(clip.ClipID)
+        if os.path.isfile(os.path.join("vectors", self.ttv, clip_id+".pt")):
+            print(f"skipping {clip_id}. Already processed.")
+            return
         try:
             faces = detect_faces(self.face_detector, clip.path, max_frames=300)
             embedding = self.embedder(faces).detach()
         except Exception as e:
-            warnings.warn(f"Error processing clip {clip['clip_id']}. Skipping.\n{type(e)}: {e}")
+            warnings.warn(f"Error processing clip {clip_id}. Skipping.\n{type(e)}: {e}")
             return
         return dict(
             clip_id=clip_id,

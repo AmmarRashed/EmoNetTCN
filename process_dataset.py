@@ -31,7 +31,7 @@ for ttv in ["Train", "Validation", "Test"]:
     dataset = VideoDataset(root="../DAiSEE/DataSet/", csv=f"../DAiSEE/Labels/{ttv}Labels.csv", ttv=ttv,
                            face_detector=mtcnn, embedder=resnet)
 
-    dataloader = DataLoader(dataset, batch_size=2, shuffle=False, collate_fn=process_batch)
+    dataloader = DataLoader(dataset, batch_size=20, shuffle=False, collate_fn=process_batch)
 
     for _ in tqdm(dataloader):
         pass
