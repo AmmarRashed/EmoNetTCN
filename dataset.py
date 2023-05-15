@@ -2,6 +2,7 @@ import os
 import warnings
 
 import pandas as pd
+import torch
 from facenet_pytorch.models.inception_resnet_v1 import InceptionResnetV1
 from torch.utils.data import Dataset
 
@@ -44,7 +45,7 @@ class VideoDataset(Dataset):
     def __getitem__(self, idx):
         clip = self.paths_df.iloc[idx]
         clip_id, extension = os.path.splitext(clip.ClipID)
-        if os.path.isfile(os.path.join("vectors", self.ttv, clip_id+".pt")):
+        if os.path.isfile(os.path.join("vectors", self.ttv, clip_id + ".pt")):
             print(f"skipping {clip_id}. Already processed.")
             return
         try:
@@ -63,3 +64,17 @@ class VideoDataset(Dataset):
             engagement=clip.Engagement,
             confusion=clip.Confusion,
             frustration=clip.Frustration)
+
+
+class EmbeddingDataset(Dataset):
+    def __init__(self, root, label="engagement"):
+        self.root = root
+        self.label = label
+        self.tensor_names = os.listdir(root)
+
+    def __len__(self):
+        return len(self.tensor_names)
+
+    def __getitem__(self, idx):
+        t = torch.load(os.path.join(self.root, self.tensor_names[idx]))
+        return {"y": t[self.label] / 4, "x": t["embedding"]}
