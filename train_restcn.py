@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from dataset import EmbeddingDataset
+from res_tcn import ResTCN
 from transformer import ImageEmbeddingRegressor
 
 # set random seed for Python's built-in random module
@@ -48,7 +49,7 @@ test_dataloader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=T
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using {device}")
 
-model = ImageEmbeddingRegressor().to(device)
+model = ResTCN().to(device)
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
 

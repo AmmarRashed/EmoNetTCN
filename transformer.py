@@ -14,6 +14,8 @@ class ImageEmbeddingRegressor(nn.Module):
         # decoder
         self.decoder = nn.Linear(d_model, 1)
 
+        self.init_weights()
+
     def init_weights(self) -> None:
         initrange = 0.1
         self.decoder.bias.data.zero_()
