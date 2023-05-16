@@ -29,8 +29,6 @@ class ImageEmbeddingRegressor(nn.Module):
         x = self.pooling(x)
         x = x.squeeze(-1)
         # apply decoder
-        output = torch.sigmoid(self.decoder(x)).squeeze(-1)
+        output = torch.sigmoid(self.decoder(x).squeeze(-1))
         # Apply sigmoid activation to output to constrain it between 0 and 1
-        output = torch.sigmoid(output)
-
         return output

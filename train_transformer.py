@@ -91,7 +91,7 @@ for epoch in tqdm(range(num_epochs)):
         print(f"No improvements after {patience} epochs. Training stopped.")
         break
 
-torch.save(best_model_state_dict, 'best_model_params.pt')
+torch.save(best_model_state_dict, 'resnet_vggface_transformer_weights.pt')
 
 # Load the best model parameters and test the model
 model.load_state_dict(best_model_state_dict)

@@ -77,4 +77,4 @@ class EmbeddingDataset(Dataset):
 
     def __getitem__(self, idx):
         t = torch.load(os.path.join(self.root, self.tensor_names[idx]))
-        return {"y": t[self.label] / 4, "x": t["embedding"]}
+        return {"y": t[self.label] / 3, "x": t["embedding"]}
