@@ -14,7 +14,7 @@ class ResTCN(nn.Module):
             kernel_size=7,
             dropout=.1).cuda()
 
-        self.fc = nn.Linear(512, 128).cuda()
+        self.fc = nn.Linear(512, 32).cuda()
         self.linear = nn.Linear(128, 1).cuda()
 
     def forward(self, x):
